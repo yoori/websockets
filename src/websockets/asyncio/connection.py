@@ -727,7 +727,7 @@ class Connection(asyncio.Protocol):
         """
         assert isinstance(event, Frame)
         if event.opcode in DATA_OPCODES:
-            self.logger.error("Process incoming event: " + str(event) + ": " + "\n".join(traceback.format_stack()))
+            self.logger.error("Process incoming event: " + str(event))
             self.recv_messages.put(event)
 
         if event.opcode is Opcode.PONG:
@@ -1057,6 +1057,8 @@ class Connection(asyncio.Protocol):
     # Streaming protocol callbacks
 
     def data_received(self, data: bytes) -> None:
+        self.logger.error("data_received: " + str(len(data)))
+
         # Feed incoming data to the protocol.
         self.protocol.receive_data(data)
 
