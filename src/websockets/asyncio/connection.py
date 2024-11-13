@@ -727,6 +727,7 @@ class Connection(asyncio.Protocol):
         """
         assert isinstance(event, Frame)
         if event.opcode in DATA_OPCODES:
+            self.logger.error("Process incoming event: " + str(event))
             self.recv_messages.put(event)
 
         if event.opcode is Opcode.PONG:
