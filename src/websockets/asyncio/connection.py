@@ -1057,7 +1057,12 @@ class Connection(asyncio.Protocol):
     # Streaming protocol callbacks
 
     def data_received(self, data: bytes) -> None:
-        self.logger.error("data_received: " + str(len(data)))
+        decoded_str = ''
+        try:
+            decoded_str = data.decode('utf-8')[:100]
+        except:
+            pass
+        self.logger.error("data_received (" + str(len(data)) + "): " + decoded_str)
 
         # Feed incoming data to the protocol.
         self.protocol.receive_data(data)
