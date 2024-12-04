@@ -159,6 +159,7 @@ class Assembler:
                 try:
                     frame = await self.frames.get(not self.closed)
                 except asyncio.CancelledError:
+                    print("websockets.messages: asyncio.CancelledError", flush=True)
                     # Put frames already received back into the queue
                     # so that future calls to get() can return them.
                     self.frames.reset(frames)
