@@ -12,6 +12,7 @@ import uuid
 from collections.abc import AsyncIterable, AsyncIterator, Awaitable, Iterable, Mapping
 from types import TracebackType
 from typing import Any, cast
+import threading
 
 from ..exceptions import (
     ConcurrencyError,
@@ -290,6 +291,10 @@ class Connection(asyncio.Protocol):
                 :meth:`recv_streaming` concurrently.
 
         """
+        l = asyncio.get_running_loop()
+        self.logger.error("Connection.recv" +
+           ", thread id = " + str(threading.get_native_id()) +
+           ", ev loop = " + str(id(l)))
         try:
             return await self.recv_messages.get(decode)
         except EOFError:
@@ -1062,7 +1067,11 @@ class Connection(asyncio.Protocol):
             decoded_str = data.decode('utf-8')[:100]
         except:
             pass
-        self.logger.error("data_received (" + str(len(data)) + "): " + decoded_str)
+        l = asyncio.get_running_loop()
+        self.logger.error("data_received, size = " + str(len(data)) +
+           ", thread id = " + str(threading.get_native_id()) +
+           ", ev loop = " + str(id(l)) +
+           ": " + decoded_str)
 
         # Feed incoming data to the protocol.
         self.protocol.receive_data(data)
